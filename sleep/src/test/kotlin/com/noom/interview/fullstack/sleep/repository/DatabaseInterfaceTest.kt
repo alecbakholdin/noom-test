@@ -7,8 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.whenever
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
@@ -28,17 +30,17 @@ class DatabaseInterfaceTest {
 
     @BeforeEach
     fun setUp() {
-        `when`(connection.prepareStatement(anyString())).thenReturn(preparedStatement)
+        whenever(connection.prepareStatement(anyString())).thenReturn(preparedStatement)
     }
 
 
     @Test
     fun testFindAll() {
         val resultSet = mock(ResultSet::class.java)
-        `when`(preparedStatement.executeQuery()).thenReturn(resultSet)
-        `when`(resultSet.next()).thenReturn(true).thenReturn(false)
-        `when`(resultSet.getInt("id")).thenReturn(4)
-        `when`(resultSet.getString("str")).thenReturn("value")
+        whenever(preparedStatement.executeQuery()).thenReturn(resultSet)
+        whenever(resultSet.next()).thenReturn(true).thenReturn(false)
+        whenever(resultSet.getInt("id")).thenReturn(4)
+        whenever(resultSet.getString("str")).thenReturn("value")
 
         val results = db.findAll(::deserializeTestClass, "SELECT 1", "paramOne", 2)
 
@@ -58,10 +60,10 @@ class DatabaseInterfaceTest {
     @Test
     fun testFindOneWithOneResult() {
         val resultSet = mock(ResultSet::class.java)
-        `when`(preparedStatement.executeQuery()).thenReturn(resultSet)
-        `when`(resultSet.next()).thenReturn(true).thenReturn(false)
-        `when`(resultSet.getInt("id")).thenReturn(4)
-        `when`(resultSet.getString("str")).thenReturn("value")
+        whenever(preparedStatement.executeQuery()).thenReturn(resultSet)
+        whenever(resultSet.next()).thenReturn(true).thenReturn(false)
+        whenever(resultSet.getInt("id")).thenReturn(4)
+        whenever(resultSet.getString("str")).thenReturn("value")
 
         val result = db.findOne(::deserializeTestClass, "SELECT 1")
 
@@ -71,8 +73,8 @@ class DatabaseInterfaceTest {
     @Test
     fun testFindOneWithNoResults() {
         val resultSet = mock(ResultSet::class.java)
-        `when`(preparedStatement.executeQuery()).thenReturn(resultSet)
-        `when`(resultSet.next()).thenReturn(false)
+        whenever(preparedStatement.executeQuery()).thenReturn(resultSet)
+        whenever(resultSet.next()).thenReturn(false)
 
         val result = db.findOne(::deserializeTestClass, "SELECT 1")
 
@@ -82,10 +84,10 @@ class DatabaseInterfaceTest {
     @Test
     fun testFindOneWithTooManyResultsThrowsException() {
         val resultSet = mock(ResultSet::class.java)
-        `when`(preparedStatement.executeQuery()).thenReturn(resultSet)
-        `when`(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false)
-        `when`(resultSet.getInt("id")).thenReturn(4)
-        `when`(resultSet.getString("str")).thenReturn("value")
+        whenever(preparedStatement.executeQuery()).thenReturn(resultSet)
+        whenever(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+        whenever(resultSet.getInt("id")).thenReturn(4)
+        whenever(resultSet.getString("str")).thenReturn("value")
 
         Assertions.assertThrows(IllegalStateException::class.java, {
             db.findOne(::deserializeTestClass, "SELECT 1")
