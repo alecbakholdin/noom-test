@@ -7,8 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -29,8 +28,7 @@ class DatabaseInterfaceTest {
 
     @BeforeEach
     fun setUp() {
-        `when`(connection.prepareStatement(anyString()))
-            .thenReturn(preparedStatement)
+        `when`(connection.prepareStatement(anyString())).thenReturn(preparedStatement)
     }
 
 
@@ -42,9 +40,19 @@ class DatabaseInterfaceTest {
         `when`(resultSet.getInt("id")).thenReturn(4)
         `when`(resultSet.getString("str")).thenReturn("value")
 
-        val results = db.findAll(::deserializeTestClass, "sql query")
+        val results = db.findAll(::deserializeTestClass, "SELECT 1", "paramOne", 2)
 
         Assertions.assertIterableEquals(listOf(TestClass(4, "value")), results)
+        verify(preparedStatement).setString(1, "paramOne")
+        verify(preparedStatement).setInt(2, 2)
+    }
+
+    @Test
+    fun testPrepareStatementFailsOnUnknownType() {
+        Assertions.assertThrows(
+            IllegalArgumentException::class.java,
+            { db.prepareStatement("SELECT 1", TestClass(1, "test")) }
+        )
     }
 
     @Test
@@ -55,7 +63,7 @@ class DatabaseInterfaceTest {
         `when`(resultSet.getInt("id")).thenReturn(4)
         `when`(resultSet.getString("str")).thenReturn("value")
 
-        val result = db.findOne(::deserializeTestClass, "sql query")
+        val result = db.findOne(::deserializeTestClass, "SELECT 1")
 
         Assertions.assertEquals(TestClass(4, "value"), result)
     }
@@ -66,7 +74,7 @@ class DatabaseInterfaceTest {
         `when`(preparedStatement.executeQuery()).thenReturn(resultSet)
         `when`(resultSet.next()).thenReturn(false)
 
-        val result = db.findOne(::deserializeTestClass, "sql query")
+        val result = db.findOne(::deserializeTestClass, "SELECT 1")
 
         Assertions.assertNull(result)
     }
@@ -79,7 +87,9 @@ class DatabaseInterfaceTest {
         `when`(resultSet.getInt("id")).thenReturn(4)
         `when`(resultSet.getString("str")).thenReturn("value")
 
-        Assertions.assertThrows(IllegalStateException::class.java, { db.findOne(::deserializeTestClass, "sql query") })
+        Assertions.assertThrows(IllegalStateException::class.java, {
+            db.findOne(::deserializeTestClass, "SELECT 1")
+        })
     }
 }
 

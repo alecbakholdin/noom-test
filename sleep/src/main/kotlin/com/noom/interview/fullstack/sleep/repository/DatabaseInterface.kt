@@ -1,20 +1,17 @@
 package com.noom.interview.fullstack.sleep.repository
 
+import org.intellij.lang.annotations.Language
 import org.springframework.stereotype.Service
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
-sealed interface Param {
-    data class Text(val value: String) : Param
-    data class Integer(val value: Int) : Param
-}
 
 @Service
 class DatabaseInterface(
     private var connection: Connection
 ) {
-    fun <T> findAll(deserializer: (ResultSet) -> T, query: String, vararg params: Param): List<T> {
+    fun <T> findAll(deserializer: (ResultSet) -> T, @Language("SQL") query: String, vararg params: Any): List<T> {
         val items = mutableListOf<T>()
         prepareStatement(query, *params).use { stmt ->
             stmt.executeQuery().use { resultSet ->
@@ -26,19 +23,20 @@ class DatabaseInterface(
         return items;
     }
 
-    fun <T> findOne(deserializer: (ResultSet) -> T, query: String, vararg params: Param): T? {
+    fun <T> findOne(deserializer: (ResultSet) -> T, @Language("SQL") query: String, vararg params: Any): T? {
         val items = findAll(deserializer, query, *params)
         if (items.size == 1) return items[0]
         if (items.isEmpty()) return null
         throw IllegalStateException("Query returned more than one entry")
     }
 
-    fun prepareStatement(query: String, vararg params: Param): PreparedStatement {
+    fun prepareStatement(@Language("SQL") query: String, vararg params: Any): PreparedStatement {
         val stmt = connection.prepareStatement(query)
         params.forEachIndexed { index, param ->
             when (param) {
-                is Param.Text -> stmt.setString(index, param.value)
-                is Param.Integer -> stmt.setInt(index, param.value)
+                is String -> stmt.setString(index + 1, param)
+                is Int -> stmt.setInt(index + 1, param)
+                else -> throw IllegalArgumentException("Unsupported param type " + param::class.qualifiedName)
             }
         }
         return stmt
