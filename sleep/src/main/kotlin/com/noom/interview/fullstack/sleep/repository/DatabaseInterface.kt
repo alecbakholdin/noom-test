@@ -18,7 +18,7 @@ class DatabaseInterface(
                 }
             }
         }
-        return items;
+        return items
     }
 
     fun <T> findOne(deserializer: (ResultSet) -> T, @Language("SQL") query: String, vararg params: Any): T? {
