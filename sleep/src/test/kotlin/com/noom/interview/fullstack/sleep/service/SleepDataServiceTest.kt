@@ -1,16 +1,20 @@
 package com.noom.interview.fullstack.sleep.service
 
+import com.noom.interview.fullstack.sleep.exception.NotFoundException
 import com.noom.interview.fullstack.sleep.model.SleepData
 import com.noom.interview.fullstack.sleep.model.SleepDataPayload
 import com.noom.interview.fullstack.sleep.model.SleepQuality
 import com.noom.interview.fullstack.sleep.model.User
 import com.noom.interview.fullstack.sleep.repository.SleepDataRepository
+import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import java.sql.Date
 import java.sql.Time
 import java.time.LocalDate
@@ -46,5 +50,29 @@ class SleepDataServiceTest {
                 quality = SleepQuality.BAD
             )
         )
+    }
+
+    @Test
+    fun testGetLastSleepData() {
+        val expected = SleepData(
+            id = 0,
+            userId = 2,
+            date = Date.valueOf("2026-01-01"),
+            timeStart = Time.valueOf("18:00:00"),
+            durationHours = 8,
+            quality = SleepQuality.BAD
+        )
+
+        whenever(sleepDataRepository.getLastSleepData(1)).thenReturn(expected)
+        val actual = sleepDataService.getLastSleep(User(id = 1, username = "user"))
+        assertSame(expected, actual)
+    }
+
+    @Test
+    fun testGetLastSleepDataDoesntExist() {
+        whenever(sleepDataRepository.getLastSleepData(1)).thenReturn(null)
+        assertThrows(NotFoundException::class.java) {
+            sleepDataService.getLastSleep(User(id = 1, username = "user"))
+        }
     }
 }
