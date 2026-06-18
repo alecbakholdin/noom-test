@@ -8,7 +8,7 @@ class SleepDataRepository(private val db: DatabaseInterface) {
     fun createSleepData(data: SleepData) {
         val query = """INSERT INTO sleep_data 
             |(user_id, date, time_start, duration_hours, quality) VALUES
-            |(?, ?, ?, ?, ?)
+            |(?, ?, ?, ?, ?::sleep_quality)
         """.trimMargin()
         val modifiedCount = db.prepareStatement(
             query,
