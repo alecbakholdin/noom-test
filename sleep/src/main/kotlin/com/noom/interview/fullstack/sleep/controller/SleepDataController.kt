@@ -6,6 +6,7 @@ import com.noom.interview.fullstack.sleep.model.SleepDataReport
 import com.noom.interview.fullstack.sleep.model.User
 import com.noom.interview.fullstack.sleep.service.SleepDataService
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -22,12 +23,12 @@ class SleepDataController(
         return ResponseEntity<Void>(HttpStatus.CREATED)
     }
 
-    @GetMapping("/api/sleep/log")
+    @GetMapping("/api/sleep/log", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getLastSleepData(user: User): SleepData {
         return sleepDataService.getLastSleep(user)
     }
 
-    @GetMapping("/api/sleep/report")
+    @GetMapping("/api/sleep/report", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getLast30DaysReport(user: User): SleepDataReport {
         return sleepDataService.getLast30DaysReport(user)
     }

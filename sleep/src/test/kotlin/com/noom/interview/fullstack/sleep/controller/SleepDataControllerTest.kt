@@ -76,7 +76,7 @@ class SleepDataControllerTest {
 
     @Test
     fun `should fetch last sleep data from service`() {
-        SleepData(
+        val sleepData = SleepData(
             id = 1,
             userId = USER_ID,
             date = Date.valueOf("2026-01-01"),
@@ -85,9 +85,10 @@ class SleepDataControllerTest {
             durationHours = 10f,
             quality = SleepQuality.BAD
         )
+        whenever(sleepDataService.getLastSleep(USER)).thenReturn(sleepData)
         mockMvc.get("/api/sleep/log") {
             header("X-User-Name", USERNAME)
-        }.andExpect {
+        }.andDo { print() }.andExpect {
             status { isOk() }
             content {
                 contentType(MediaType.APPLICATION_JSON)
@@ -97,7 +98,7 @@ class SleepDataControllerTest {
                 |  "userId": $USER_ID,
                 |  "date": "2026-01-01",
                 |  "timeStart": "18:00:00",
-                |  "durationHours": 8,
+                |  "durationHours": 10,
                 |  "quality": "BAD"
                 }""".trimMargin()
                 )
