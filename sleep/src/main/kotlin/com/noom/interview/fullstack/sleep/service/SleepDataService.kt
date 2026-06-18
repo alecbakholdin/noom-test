@@ -1,5 +1,6 @@
 package com.noom.interview.fullstack.sleep.service
 
+import com.noom.interview.fullstack.sleep.exception.NotFoundException
 import com.noom.interview.fullstack.sleep.model.SleepData
 import com.noom.interview.fullstack.sleep.model.SleepDataPayload
 import com.noom.interview.fullstack.sleep.model.User
@@ -21,5 +22,10 @@ class SleepDataService(private val sleepDataRepository: SleepDataRepository) {
                 quality = sleepData.quality
             )
         )
+    }
+
+    fun getLastSleep(user: User): SleepData {
+        return sleepDataRepository.getLastSleepData(user.id)
+            ?: throw NotFoundException("User does not have any logged sleep data")
     }
 }
