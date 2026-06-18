@@ -2,6 +2,7 @@ package com.noom.interview.fullstack.sleep.controller
 
 import com.noom.interview.fullstack.sleep.model.SleepData
 import com.noom.interview.fullstack.sleep.model.SleepDataPayload
+import com.noom.interview.fullstack.sleep.model.SleepDataReport
 import com.noom.interview.fullstack.sleep.model.User
 import com.noom.interview.fullstack.sleep.service.SleepDataService
 import org.springframework.http.HttpStatus
@@ -24,5 +25,10 @@ class SleepDataController(
     @GetMapping("/api/sleep/log")
     fun getLastSleepData(user: User): SleepData {
         return sleepDataService.getLastSleep(user)
+    }
+
+    @GetMapping("/api/sleep/report")
+    fun getLast30DaysReport(user: User): SleepDataReport {
+        return sleepDataService.getLast30DaysReport(user)
     }
 }
