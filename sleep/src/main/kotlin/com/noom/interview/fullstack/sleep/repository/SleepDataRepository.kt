@@ -10,14 +10,15 @@ import java.sql.ResultSet
 class SleepDataRepository(private val db: DatabaseInterface) {
     fun createSleepData(data: SleepData) {
         val query = """INSERT INTO sleep_data 
-            |(user_id, date, time_start, duration_hours, quality) VALUES
-            |(?, ?, ?, ?, ?::sleep_quality)
+            |(user_id, date, time_start, time_end, duration_hours, quality) VALUES
+            |(?, ?, ?, ?, ?, ?::sleep_quality)
         """.trimMargin()
         val modifiedCount = db.prepareStatement(
             query,
             data.userId,
             data.date,
             data.timeStart,
+            data.timeEnd,
             data.durationHours,
             data.quality.toString()
         ).executeUpdate()
@@ -32,6 +33,7 @@ class SleepDataRepository(private val db: DatabaseInterface) {
             |  user_id,
             |  date,
             |  time_start,
+            |  time_end,
             |  duration_hours,
             |  quality
             |FROM sleep_data 
@@ -48,6 +50,7 @@ class SleepDataRepository(private val db: DatabaseInterface) {
             |  user_id,
             |  date,
             |  time_start,
+            |  time_end,
             |  duration_hours,
             |  quality
             |FROM sleep_data 
@@ -63,7 +66,8 @@ class SleepDataRepository(private val db: DatabaseInterface) {
             userId = resultSet.getInt("user_id"),
             date = resultSet.getDate("date"),
             timeStart = resultSet.getTime("time_start"),
-            durationHours = resultSet.getInt("duration_hours"),
+            timeEnd = resultSet.getTime("time_end"),
+            durationHours = resultSet.getFloat("duration_hours"),
             quality = SleepQuality.valueOf(resultSet.getString("quality")),
         )
     }

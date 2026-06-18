@@ -34,6 +34,8 @@ class DatabaseInterface(
             when (param) {
                 is String -> stmt.setString(index + 1, param)
                 is Int -> stmt.setInt(index + 1, param)
+                is Float -> stmt.setFloat(index + 1, param)
+                is Double -> stmt.setDouble(index + 1, param)
                 is Date -> stmt.setDate(index + 1, param)
                 is Time -> stmt.setTime(index + 1, param)
                 else -> throw IllegalArgumentException("Unsupported param type " + param::class.qualifiedName)

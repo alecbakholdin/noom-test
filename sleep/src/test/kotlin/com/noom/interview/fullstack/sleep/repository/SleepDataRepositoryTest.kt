@@ -31,7 +31,8 @@ class SleepDataRepositoryTest {
             userId = 4,
             date = Date.valueOf("2026-01-01"),
             timeStart = Time.valueOf("18:00:00"),
-            durationHours = 8,
+            timeEnd = Time.valueOf("04:00:00"),
+            durationHours = 10f,
             quality = SleepQuality.BAD
         )
         val stmt: PreparedStatement = mock()
@@ -42,7 +43,8 @@ class SleepDataRepositoryTest {
                 eq(4),
                 eq(Date.valueOf("2026-01-01")),
                 eq(Time.valueOf("18:00:00")),
-                eq(8),
+                eq(Time.valueOf("04:00:00")),
+                eq(10f),
                 eq("BAD")
             )
         ).thenReturn(stmt)
@@ -60,7 +62,8 @@ class SleepDataRepositoryTest {
             userId = 4,
             date = Date.valueOf("2026-01-01"),
             timeStart = Time.valueOf("18:00:00"),
-            durationHours = 8,
+            timeEnd = Time.valueOf("04:00:00"),
+            durationHours = 10f,
             quality = SleepQuality.BAD
         )
         val stmt: PreparedStatement = mock()
@@ -71,7 +74,8 @@ class SleepDataRepositoryTest {
                 eq(4),
                 eq(Date.valueOf("2026-01-01")),
                 eq(Time.valueOf("18:00:00")),
-                eq(8),
+                eq(Time.valueOf("4:00:00")),
+                eq(10f),
                 eq("BAD")
             )
         ).thenReturn(stmt)
@@ -91,7 +95,8 @@ class SleepDataRepositoryTest {
             userId = 1,
             date = Date.valueOf("2026-01-01"),
             timeStart = Time.valueOf("18:00:00"),
-            durationHours = 8,
+            timeEnd = Time.valueOf("4:00:00"),
+            durationHours = 8f,
             quality = SleepQuality.BAD
         )
         whenever(db.findOne<SleepData>(any(), anyString(), eq(4)))
@@ -109,7 +114,8 @@ class SleepDataRepositoryTest {
                 userId = 1,
                 date = Date.valueOf("2026-01-01"),
                 timeStart = Time.valueOf("18:00:00"),
-                durationHours = 8,
+                timeEnd = Time.valueOf("4:00:00"),
+                durationHours = 10f,
                 quality = SleepQuality.BAD
             )
         )
@@ -133,7 +139,8 @@ class SleepDataRepositoryTest {
             userId = 1,
             date = Date.valueOf("2026-01-01"),
             timeStart = Time.valueOf("18:00:00"),
-            durationHours = 8,
+            timeEnd = Time.valueOf("4:00:00"),
+            durationHours = 10f,
             quality = SleepQuality.BAD
         )
         val resultSet: ResultSet = mock()
@@ -141,7 +148,8 @@ class SleepDataRepositoryTest {
         whenever(resultSet.getInt("user_id")).thenReturn(1)
         whenever(resultSet.getDate("date")).thenReturn(Date.valueOf("2026-01-01"))
         whenever(resultSet.getTime("time_start")).thenReturn(Time.valueOf("18:00:00"))
-        whenever(resultSet.getInt("duration_hours")).thenReturn(8)
+        whenever(resultSet.getTime("time_end")).thenReturn(Time.valueOf("4:00:00"))
+        whenever(resultSet.getFloat("duration_hours")).thenReturn(10f)
         whenever(resultSet.getString("quality")).thenReturn("BAD")
 
         val actual = sleepDataRepository.deserializeSleepData(resultSet)

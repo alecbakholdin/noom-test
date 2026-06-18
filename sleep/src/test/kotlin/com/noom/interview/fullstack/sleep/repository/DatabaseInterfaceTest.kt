@@ -55,7 +55,15 @@ class DatabaseInterfaceTest {
 
     @Test
     fun testPrepareStatementSuccessfullyPreparesKnownTypes() {
-        db.prepareStatement("SELECT 1", "string", 1, Date.valueOf("2026-01-01"), Time.valueOf("18:00:00"))
+        db.prepareStatement(
+            "SELECT 1",
+            "string",
+            1,
+            Date.valueOf("2026-01-01"),
+            Time.valueOf("18:00:00"),
+            1f,
+            2.toDouble()
+        )
     }
 
     @Test
