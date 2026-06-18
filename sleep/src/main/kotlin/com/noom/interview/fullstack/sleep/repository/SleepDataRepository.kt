@@ -55,7 +55,6 @@ class SleepDataRepository(private val db: DatabaseInterface) {
             |  quality
             |FROM sleep_data 
             |WHERE user_id = ? AND date >= ?
-            |LIMIT 1
             |""".trimMargin()
         return db.findAll(::deserializeSleepData, query, userId, startDate)
     }
