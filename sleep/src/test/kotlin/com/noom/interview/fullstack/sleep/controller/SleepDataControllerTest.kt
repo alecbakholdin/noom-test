@@ -1,6 +1,7 @@
 package com.noom.interview.fullstack.sleep.controller
 
 import com.noom.interview.fullstack.sleep.auth.UserArgumentResolver
+import com.noom.interview.fullstack.sleep.model.SleepData
 import com.noom.interview.fullstack.sleep.model.SleepDataPayload
 import com.noom.interview.fullstack.sleep.model.SleepQuality
 import com.noom.interview.fullstack.sleep.model.User
@@ -15,9 +16,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import java.sql.Date
+import java.sql.Time
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -73,6 +77,36 @@ class SleepDataControllerTest {
             ),
             USER
         )
+
+    }
+
+    fun `should fetch last sleep data from service`() {
+        SleepData(
+            id = 1,
+            userId = USER_ID,
+            date = Date.valueOf("2026-01-01"),
+            timeStart = Time.valueOf("18:00:00"),
+            durationHours = 8,
+            quality = SleepQuality.BAD
+        )
+        mockMvc.get("/api/sleep/log") {
+            header("X-User-Name", USERNAME)
+        }.andExpect {
+            status { isOk() }
+            content {
+                contentType(MediaType.APPLICATION_JSON)
+                json(
+                    """{
+                |  "id": 1,
+                |  "userId": $USER_ID,
+                |  "date": "2026-01-01",
+                |  "timeStart": "18:00:00",
+                |  "durationHours": 8,
+                |  "quality": "BAD"
+                }""".trimMargin()
+                )
+            }
+        }
 
     }
 }
