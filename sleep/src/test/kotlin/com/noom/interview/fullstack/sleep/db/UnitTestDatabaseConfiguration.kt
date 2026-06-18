@@ -9,7 +9,7 @@ import java.sql.Connection
 
 
 @Configuration
-@Profile("$UNIT_TEST_PROFILE")
+@Profile(UNIT_TEST_PROFILE)
 class UnitTestDatabaseConfiguration {
     @Bean
     fun connection(): Connection {

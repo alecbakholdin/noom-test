@@ -9,12 +9,12 @@ class UserRepository(
     private val db: DatabaseInterface
 ) {
     fun getUserByUsername(username: String): User? {
-        val query = "SELECT id, username FROM users WHERE username = ?";
+        val query = "SELECT id, username FROM users WHERE username = ?"
         return db.findOne(::deserializeUser, query, username)
     }
 
     fun getUserById(id: Int): User {
-        val query = "SELECT id, username FROM users WHERE id = ?";
+        val query = "SELECT id, username FROM users WHERE id = ?"
         val user = db.findOne(::deserializeUser, query, id)
             ?: throw IllegalStateException("User with id $id not found")
         return user

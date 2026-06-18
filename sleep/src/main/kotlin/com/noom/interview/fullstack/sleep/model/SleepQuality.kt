@@ -4,4 +4,4 @@ enum class SleepQuality {
     GOOD,
     BAD,
     OK
-};
+}
