@@ -1,0 +1,25 @@
+package com.noom.interview.fullstack.sleep.service
+
+import com.noom.interview.fullstack.sleep.model.SleepData
+import com.noom.interview.fullstack.sleep.model.SleepDataPayload
+import com.noom.interview.fullstack.sleep.model.User
+import com.noom.interview.fullstack.sleep.repository.SleepDataRepository
+import org.springframework.stereotype.Service
+import java.sql.Date
+import java.sql.Time
+
+@Service
+class SleepDataService(private val sleepDataRepository: SleepDataRepository) {
+    fun createSleepData(sleepData: SleepDataPayload, user: User) {
+        sleepDataRepository.createSleepData(
+            SleepData(
+                id = 0,
+                userId = user.id,
+                date = Date.valueOf(sleepData.date),
+                timeStart = Time.valueOf(sleepData.timeStart),
+                durationHours = sleepData.durationHours,
+                quality = sleepData.quality
+            )
+        )
+    }
+}
