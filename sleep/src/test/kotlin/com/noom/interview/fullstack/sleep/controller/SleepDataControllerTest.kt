@@ -1,14 +1,11 @@
 package com.noom.interview.fullstack.sleep.controller
 
-import com.noom.interview.fullstack.sleep.auth.UserArgumentResolver
-import com.noom.interview.fullstack.sleep.model.SleepData
-import com.noom.interview.fullstack.sleep.model.SleepDataPayload
-import com.noom.interview.fullstack.sleep.model.SleepQuality
-import com.noom.interview.fullstack.sleep.model.User
+import com.noom.interview.fullstack.sleep.model.*
 import com.noom.interview.fullstack.sleep.repository.UserRepository
 import com.noom.interview.fullstack.sleep.service.SleepDataService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,10 +43,7 @@ class SleepDataControllerTest {
 
     @BeforeEach
     fun setup() {
-        mockMvc = MockMvcBuilders
-            .standaloneSetup(SleepDataController(sleepDataService))
-            .setCustomArgumentResolvers(UserArgumentResolver(userRepository))
-            .build()
+        mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
 
         whenever(userRepository.getUserByUsername(USERNAME)).thenReturn(USER)
     }
@@ -80,6 +74,7 @@ class SleepDataControllerTest {
 
     }
 
+    @Test
     fun `should fetch last sleep data from service`() {
         SleepData(
             id = 1,
@@ -109,5 +104,45 @@ class SleepDataControllerTest {
             }
         }
 
+    }
+
+    @Test
+    fun `should fetch last 30 days report`() {
+        val sleepData = SleepDataReport(
+            startDate = Date.valueOf("2026-06-11"),
+            endDate = Date.valueOf("2026-06-17"),
+            averageSleepDuration = 8.375f,
+            averageSleepStart = LocalTime.of(20, 30),
+            averageSleepEnd = LocalTime.of(4, 52, 30),
+            qualityMap = mapOf(
+                SleepQuality.BAD to 0,
+                SleepQuality.OK to 2,
+                SleepQuality.GOOD to 6
+
+            )
+        )
+        whenever(sleepDataService.getLast30DaysReport(any())).thenReturn(sleepData)
+        mockMvc.get("/api/sleep/report") {
+            header("X-User-Name", USERNAME)
+        }.andExpect {
+            status { isOk() }
+            content {
+                contentType(MediaType.APPLICATION_JSON)
+                json(
+                    """{
+                        "startDate": "2026-06-11",
+                        "endDate": "2026-06-17",
+                        "averageSleepDuration": 8.375,
+                        "averageSleepStart": "20:30:00",
+                        "averageSleepEnd": "04:52:30",
+                        "qualityMap": {
+                          "BAD": 0,
+                          "OK": 2,
+                          "GOOD": 6
+                        }
+                    }""".trimIndent()
+                )
+            }
+        }
     }
 }
