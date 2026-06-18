@@ -2,9 +2,7 @@ package com.noom.interview.fullstack.sleep.repository
 
 import org.intellij.lang.annotations.Language
 import org.springframework.stereotype.Service
-import java.sql.Connection
-import java.sql.PreparedStatement
-import java.sql.ResultSet
+import java.sql.*
 
 
 @Service
@@ -36,6 +34,8 @@ class DatabaseInterface(
             when (param) {
                 is String -> stmt.setString(index + 1, param)
                 is Int -> stmt.setInt(index + 1, param)
+                is Date -> stmt.setDate(index + 1, param)
+                is Time -> stmt.setTime(index + 1, param)
                 else -> throw IllegalArgumentException("Unsupported param type " + param::class.qualifiedName)
             }
         }

@@ -11,9 +11,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
-import java.sql.Connection
-import java.sql.PreparedStatement
-import java.sql.ResultSet
+import java.sql.*
 
 
 @ExtendWith(MockitoExtension::class)
@@ -52,9 +50,12 @@ class DatabaseInterfaceTest {
     @Test
     fun testPrepareStatementFailsOnUnknownType() {
         Assertions.assertThrows(
-            IllegalArgumentException::class.java,
-            { db.prepareStatement("SELECT 1", TestClass(1, "test")) }
-        )
+            IllegalArgumentException::class.java, { db.prepareStatement("SELECT 1", TestClass(1, "test")) })
+    }
+
+    @Test
+    fun testPrepareStatementSuccessfullyPreparesKnownTypes() {
+        db.prepareStatement("SELECT 1", "string", 1, Date.valueOf("2026-01-01"), Time.valueOf("18:00:00"))
     }
 
     @Test
