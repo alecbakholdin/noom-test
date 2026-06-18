@@ -18,7 +18,7 @@ class SleepDataRepository(private val db: DatabaseInterface) {
             data.date,
             data.timeStart,
             data.durationHours,
-            data.quality
+            data.quality.toString()
         ).executeUpdate()
         if (modifiedCount == 0) {
             throw IllegalStateException("Failed to create sleep data")
