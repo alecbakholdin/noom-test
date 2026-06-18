@@ -3,18 +3,17 @@ package com.noom.interview.fullstack.sleep.repository
 import com.noom.interview.fullstack.sleep.model.SleepData
 import com.noom.interview.fullstack.sleep.model.SleepQuality
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import java.sql.Date
 import java.sql.PreparedStatement
+import java.sql.ResultSet
 import java.sql.Time
 
 @ExtendWith(MockitoExtension::class)
@@ -83,5 +82,45 @@ class SleepDataRepositoryTest {
         )
 
         verify(stmt).executeUpdate()
+    }
+
+    @Test
+    fun testGetLastSleep() {
+        val expected = SleepData(
+            id = 1,
+            userId = 1,
+            date = Date.valueOf("2026-01-01"),
+            timeStart = Time.valueOf("18:00:00"),
+            durationHours = 8,
+            quality = SleepQuality.BAD
+        )
+        whenever(db.findOne<SleepData>(any(), anyString(), eq(4)))
+            .thenReturn(expected)
+
+        val lastSleepData = sleepDataRepository.getLastSleepData(4)
+        assertEquals(expected, lastSleepData)
+    }
+
+    @Test
+    fun testDeserializeSleepData() {
+        val expected = SleepData(
+            id = 1,
+            userId = 1,
+            date = Date.valueOf("2026-01-01"),
+            timeStart = Time.valueOf("18:00:00"),
+            durationHours = 8,
+            quality = SleepQuality.BAD
+        )
+        val resultSet: ResultSet = mock()
+        whenever(resultSet.getInt("id")).thenReturn(1)
+        whenever(resultSet.getInt("user_id")).thenReturn(1)
+        whenever(resultSet.getDate("date")).thenReturn(Date.valueOf("2026-01-01"))
+        whenever(resultSet.getTime("time_start")).thenReturn(Time.valueOf("18:00:00"))
+        whenever(resultSet.getInt("duration_hours")).thenReturn(8)
+        whenever(resultSet.getString("quality")).thenReturn("BAD")
+
+        val actual = sleepDataRepository.deserializeSleepData(resultSet)
+
+        assertEquals(expected, actual)
     }
 }
