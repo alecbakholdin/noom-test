@@ -29,12 +29,12 @@ class SleepDataServiceTest {
     private lateinit var sleepDataService: SleepDataService
 
     @Test
-    fun testCreateSleepData() {
+    fun testCreateSleepDataInvertedTimes() {
         sleepDataService.createSleepData(
             SleepDataPayload(
                 date = LocalDate.of(2026, 1, 1),
                 timeStart = LocalTime.of(18, 0),
-                durationHours = 8,
+                timeEnd = LocalTime.of(4, 0),
                 quality = SleepQuality.BAD
             ),
             User(id = 2, username = "user")
@@ -46,7 +46,58 @@ class SleepDataServiceTest {
                 userId = 2,
                 date = Date.valueOf("2026-01-01"),
                 timeStart = Time.valueOf("18:00:00"),
-                durationHours = 8,
+                timeEnd = Time.valueOf("4:00:00"),
+                durationHours = 10f,
+                quality = SleepQuality.BAD
+            )
+        )
+    }
+
+    @Test
+    fun testCreateSleepDataRegularTimes() {
+        sleepDataService.createSleepData(
+            SleepDataPayload(
+                date = LocalDate.of(2026, 1, 1),
+                timeStart = LocalTime.of(4, 0),
+                timeEnd = LocalTime.of(12, 0),
+                quality = SleepQuality.BAD
+            ),
+            User(id = 2, username = "user")
+        )
+
+        verify(sleepDataRepository).createSleepData(
+            SleepData(
+                id = 0,
+                userId = 2,
+                date = Date.valueOf("2026-01-01"),
+                timeStart = Time.valueOf("4:00:00"),
+                timeEnd = Time.valueOf("12:00:00"),
+                durationHours = 8f,
+                quality = SleepQuality.BAD
+            )
+        )
+    }
+
+    @Test
+    fun testCreateSleepDataFractionalTimes() {
+        sleepDataService.createSleepData(
+            SleepDataPayload(
+                date = LocalDate.of(2026, 1, 1),
+                timeStart = LocalTime.of(4, 0),
+                timeEnd = LocalTime.of(12, 30),
+                quality = SleepQuality.BAD
+            ),
+            User(id = 2, username = "user")
+        )
+
+        verify(sleepDataRepository).createSleepData(
+            SleepData(
+                id = 0,
+                userId = 2,
+                date = Date.valueOf("2026-01-01"),
+                timeStart = Time.valueOf("4:00:00"),
+                timeEnd = Time.valueOf("12:30:00"),
+                durationHours = 8.5f,
                 quality = SleepQuality.BAD
             )
         )
@@ -59,7 +110,8 @@ class SleepDataServiceTest {
             userId = 2,
             date = Date.valueOf("2026-01-01"),
             timeStart = Time.valueOf("18:00:00"),
-            durationHours = 8,
+            timeEnd = Time.valueOf("4:00:00"),
+            durationHours = 10f,
             quality = SleepQuality.BAD
         )
 

@@ -6,6 +6,6 @@ import java.time.LocalTime
 data class SleepDataPayload(
     var date: LocalDate,
     var timeStart: LocalTime,
-    var durationHours: Int,
+    var timeEnd: LocalTime,
     var quality: SleepQuality
 )

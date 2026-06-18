@@ -62,7 +62,7 @@ class SleepDataControllerTest {
             content = """{
                 "date": "2026-06-17",
                 "timeStart": "20:00:00",
-                "durationHours": 8,
+                "timeEnd": "04:00:00",
                 "quality": "GOOD"
             }""".trimIndent()
         }.andExpect { status { isCreated() } }
@@ -72,7 +72,7 @@ class SleepDataControllerTest {
             SleepDataPayload(
                 date = LocalDate.of(2026, 6, 17),
                 timeStart = LocalTime.of(20, 0),
-                durationHours = 8,
+                timeEnd = LocalTime.of(4, 0),
                 quality = SleepQuality.GOOD
             ),
             USER
@@ -86,7 +86,8 @@ class SleepDataControllerTest {
             userId = USER_ID,
             date = Date.valueOf("2026-01-01"),
             timeStart = Time.valueOf("18:00:00"),
-            durationHours = 8,
+            timeEnd = Time.valueOf("4:00:00"),
+            durationHours = 10f,
             quality = SleepQuality.BAD
         )
         mockMvc.get("/api/sleep/log") {

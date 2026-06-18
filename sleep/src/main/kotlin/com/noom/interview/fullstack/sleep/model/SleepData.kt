@@ -8,6 +8,7 @@ data class SleepData(
     var userId: Int,
     var date: Date,
     var timeStart: Time,
-    var durationHours: Int,
+    var timeEnd: Time,
+    var durationHours: Float,
     var quality: SleepQuality
 )
