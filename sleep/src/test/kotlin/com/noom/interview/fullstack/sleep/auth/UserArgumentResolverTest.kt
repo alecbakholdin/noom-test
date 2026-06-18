@@ -55,7 +55,7 @@ class UserArgumentResolverTest {
         verify(userRepository).createUser(any())
     }
 
-
+    @SuppressWarnings
     fun testMethod(user: User, test: String) {
 
     }
