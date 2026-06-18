@@ -43,7 +43,7 @@ class SleepDataRepositoryTest {
                 eq(Date.valueOf("2026-01-01")),
                 eq(Time.valueOf("18:00:00")),
                 eq(8),
-                eq(SleepQuality.BAD)
+                eq("BAD")
             )
         ).thenReturn(stmt)
 
@@ -72,7 +72,7 @@ class SleepDataRepositoryTest {
                 eq(Date.valueOf("2026-01-01")),
                 eq(Time.valueOf("18:00:00")),
                 eq(8),
-                eq(SleepQuality.BAD)
+                eq("BAD")
             )
         ).thenReturn(stmt)
 
@@ -99,6 +99,31 @@ class SleepDataRepositoryTest {
 
         val lastSleepData = sleepDataRepository.getLastSleepData(4)
         assertEquals(expected, lastSleepData)
+    }
+
+    @Test
+    fun testGetSleepDataSince() {
+        val expected = listOf(
+            SleepData(
+                id = 1,
+                userId = 1,
+                date = Date.valueOf("2026-01-01"),
+                timeStart = Time.valueOf("18:00:00"),
+                durationHours = 8,
+                quality = SleepQuality.BAD
+            )
+        )
+        whenever(
+            db.findAll<SleepData>(
+                any(),
+                anyString(),
+                eq(4),
+                eq(Date.valueOf("2026-01-01"))
+            )
+        ).thenReturn(expected)
+        val actual = sleepDataRepository.getSleepDataSince(4, Date.valueOf("2026-01-01"))
+
+        assertEquals(expected, actual)
     }
 
     @Test

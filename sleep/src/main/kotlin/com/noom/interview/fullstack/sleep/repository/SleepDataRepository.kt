@@ -3,6 +3,7 @@ package com.noom.interview.fullstack.sleep.repository
 import com.noom.interview.fullstack.sleep.model.SleepData
 import com.noom.interview.fullstack.sleep.model.SleepQuality
 import org.springframework.stereotype.Repository
+import java.sql.Date
 import java.sql.ResultSet
 
 @Repository
@@ -39,6 +40,21 @@ class SleepDataRepository(private val db: DatabaseInterface) {
             |LIMIT 1
             |""".trimMargin()
         return db.findOne(::deserializeSleepData, query, userId)
+    }
+
+    fun getSleepDataSince(userId: Int, startDate: Date): List<SleepData> {
+        val query = """SELECT 
+            |  id,
+            |  user_id,
+            |  date,
+            |  time_start,
+            |  duration_hours,
+            |  quality
+            |FROM sleep_data 
+            |WHERE user_id = ? AND date >= ?
+            |LIMIT 1
+            |""".trimMargin()
+        return db.findAll(::deserializeSleepData, query, userId, startDate)
     }
 
     fun deserializeSleepData(resultSet: ResultSet): SleepData {
